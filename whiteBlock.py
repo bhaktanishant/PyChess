@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Block import Block
+from block import Block
 
 class WhiteBlock(Block):
     def __init__(self):

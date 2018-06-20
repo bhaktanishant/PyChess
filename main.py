@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys, os
-from BlackBlock import BlackBlock
-from WhiteBlock import WhiteBlock
+from blackBlock import BlackBlock
+from whiteBlock import WhiteBlock
 from PySide2.QtWidgets import QApplication, QWidget, QGridLayout
 from PySide2.QtGui import QPixmap
 
