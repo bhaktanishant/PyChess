@@ -3,6 +3,6 @@
 from block import Block
 
 class WhiteBlock(Block):
-    def __init__(self):
-        Block.__init__(self)
+    def __init__(self, parent=None):
+        Block.__init__(self, parent)
         self.setStyleSheet('background: white')

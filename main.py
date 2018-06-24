@@ -1,74 +1,119 @@
 #!/usr/bin/env python3
 
-import sys, os
-from blackBlock import BlackBlock
-from whiteBlock import WhiteBlock
-from PySide2.QtWidgets import QApplication, QWidget, QGridLayout
+import os
+import sys
+from functools import partial
+
+from PySide2.QtCore import SIGNAL, QObject, Qt
 from PySide2.QtGui import QPixmap
+from PySide2.QtWidgets import QApplication, QGridLayout, QWidget
+
+from blackBlock import BlackBlock
+from keys.moves import Moves
+from param import parameter
+from whiteBlock import WhiteBlock
+
 
 class Board(QWidget):
+
+    BLACK_TURN = True
 
     def __init__(self):
         QWidget.__init__(self)
         self.setWindowTitle("Chess")
-        drawableDir = os.getcwd() + "/res/drawable/"
-        self.BLACK_PAWN = drawableDir + "black_pawn.png"
-        self.BLACK_ELEPHANT = drawableDir + "black_elephant.png"
-        self.BLACK_HORSE = drawableDir + "black_horse.png"
-        self.BLACK_CAMEL = drawableDir + "black_camel.png"
-        self.BLACK_KING = drawableDir + "black_king.png"
-        self.BLACK_QUEEN = drawableDir + "black_queen.png"
-        self.WHITE_PAWN = drawableDir + "white_pawn.png"
-        self.WHITE_ELEPHANT = drawableDir + "white_elephant.png"
-        self.WHITE_HORSE = drawableDir + "white_horse.png"
-        self.WHITE_CAMEL = drawableDir + "white_camel.png"
-        self.WHITE_KING = drawableDir + "white_king.png"
-        self.WHITE_QUEEN = drawableDir + "white_queen.png"
+        self.param = parameter()
         self.initUI()
 
     def initUI(self):
-        gridLayout = QGridLayout()
+        gridLayout = QGridLayout(self)
         gridLayout.setMargin(0)
         gridLayout.setSpacing(0)
         blackTurn = True
-        blocks = []
+        blocks = {}
         pixMap = QPixmap()
         for i in range(8):
             for j in range(8):
                 if(blackTurn):
-                    block = BlackBlock()
+                    block = BlackBlock(self)
                 else:
-                    block = WhiteBlock()
+                    block = WhiteBlock(self)
                 if j != 7:
                     blackTurn = not blackTurn
                 if (i == 0 and j == 0) or (i == 0 and j == 7):
-                    block = self.setKey(block, pixMap, self.BLACK_ELEPHANT)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_ELEPHANT)
                 if (i == 0 and j == 1) or (i == 0 and j == 6):
-                    block = self.setKey(block, pixMap, self.BLACK_HORSE)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_HORSE)
                 if (i == 0 and j == 2) or (i == 0 and j == 5):
-                    block = self.setKey(block, pixMap, self.BLACK_CAMEL)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_CAMEL)
                 if (i == 0 and j == 3):
-                    block = self.setKey(block, pixMap, self.BLACK_QUEEN)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_QUEEN)
                 if (i == 0 and j == 4):
-                    block = self.setKey(block, pixMap, self.BLACK_KING)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_KING)
                 if i == 1:
-                    block = self.setKey(block, pixMap, self.BLACK_PAWN)
-                gridLayout.addWidget(block, i, j)
-                blocks.append(block)
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.BLACK_PAWN)
 
-        self.setLayout(gridLayout)
+                if (i == 7 and j == 0) or (i == 7 and j == 7):
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_ELEPHANT)
+                if (i == 7 and j == 1) or (i == 7 and j == 6):
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_HORSE)
+                if (i == 7 and j == 2) or (i == 7 and j == 5):
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_CAMEL)
+                if (i == 7 and j == 4):
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_QUEEN)
+                if (i == 7 and j == 3):
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_KING)
+                if i == 6:
+                    block = self.setValues(
+                        block, pixMap, (i,  j), self.param.WHITE_PAWN)
+                else:
+                    block = self.setValues(block, pixMap, (i, j), None)
+                gridLayout.addWidget(block, i, j)
+                block.mousePressEvent = partial(self.clicked, block, blocks)
+                blocks[(i, j)] = block
         self.show()
 
-    def setKey(self, block, pixMap, key):
-        pixMap.load(key)
-        block.setPixmap(pixMap.scaled(50, 50))
-        block.setKey(key)
+    def setValues(self, block, pixMap, position, key):
+        if key is not None:
+            pixMap.load(key)
+            block.setPixmap(pixMap.scaled(50, 60))
+            block.setKey(key)
+            block.setOccupied(True)
+            if "black" in key:
+                block.setColor("black")
+            else:
+                block.setColor("white")
+        else:
+            block.setOccupied(False)
+        block.setPosition(position)
+        block.setActivated(False)
+        block.setFirstTurn(True)
         return block
 
-def main():
-    app = QApplication(sys.argv)
-    yoo = Board()
-    app.exec_()
+    def clicked(self, block, blocks, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            if not block.haveActivated():
+                for value in blocks.values():
+                    value.setActivated(False)
+                if block.haveOccupied():
+                    block.setActivated(True)
+                maxMoves = Moves(block)
+                print(maxMoves.canRoamTo())
+            else:
+                pass
+
 
 if __name__ == '__main__':
-    main()
+    app = QApplication(sys.argv)
+    yoYoHoneySingh = Board()
+    app.exec_()
