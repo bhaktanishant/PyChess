@@ -12,19 +12,19 @@ class Block(QLabel):
         self.setAlignment(Qt.AlignCenter)
         self.show()
 
-    def setKey(self, key=None):
+    def setKey(self, key):
         self.key = key
 
-    def setOccupied(self, what=False):
+    def setOccupied(self, what):
         self.occupied = what
 
-    def setPosition(self, position=None):
+    def setPosition(self, position):
         self.position = position
 
-    def setFirstTurn(self, what=True):
+    def setFirstTurn(self, what):
         self.firstTurn = what
 
-    def setColor(self, color=None):
+    def setColor(self, color):
         self.color = color
 
     def setActivated(self, what):

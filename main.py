@@ -9,7 +9,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QGridLayout, QWidget
 
 from blackBlock import BlackBlock
-from keys.moves import Moves
+from moves import Moves
 from param import parameter
 from whiteBlock import WhiteBlock
 
@@ -42,38 +42,38 @@ class Board(QWidget):
                 if (i == 0 and j == 0) or (i == 0 and j == 7):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_ELEPHANT)
-                if (i == 0 and j == 1) or (i == 0 and j == 6):
+                elif (i == 0 and j == 1) or (i == 0 and j == 6):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_HORSE)
-                if (i == 0 and j == 2) or (i == 0 and j == 5):
+                elif (i == 0 and j == 2) or (i == 0 and j == 5):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_CAMEL)
-                if (i == 0 and j == 3):
+                elif (i == 0 and j == 3):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_QUEEN)
-                if (i == 0 and j == 4):
+                elif (i == 0 and j == 4):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_KING)
-                if i == 1:
+                elif i == 1:
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.BLACK_PAWN)
 
-                if (i == 7 and j == 0) or (i == 7 and j == 7):
+                elif (i == 7 and j == 0) or (i == 7 and j == 7):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_ELEPHANT)
-                if (i == 7 and j == 1) or (i == 7 and j == 6):
+                elif (i == 7 and j == 1) or (i == 7 and j == 6):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_HORSE)
-                if (i == 7 and j == 2) or (i == 7 and j == 5):
+                elif (i == 7 and j == 2) or (i == 7 and j == 5):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_CAMEL)
-                if (i == 7 and j == 4):
+                elif (i == 7 and j == 4):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_QUEEN)
-                if (i == 7 and j == 3):
+                elif (i == 7 and j == 3):
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_KING)
-                if i == 6:
+                elif i == 6:
                     block = self.setValues(
                         block, pixMap, (i,  j), self.param.WHITE_PAWN)
                 else:
@@ -107,7 +107,7 @@ class Board(QWidget):
                     value.setActivated(False)
                 if block.haveOccupied():
                     block.setActivated(True)
-                maxMoves = Moves(block)
+                maxMoves = Moves(block, blocks)
                 print(maxMoves.canRoamTo())
             else:
                 pass
