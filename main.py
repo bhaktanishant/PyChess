@@ -13,7 +13,6 @@ from moves import Moves
 from param import parameter
 from whiteBlock import WhiteBlock
 
-
 class Board(QWidget):
 
     BLACK_TURN = True
