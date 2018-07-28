@@ -4,9 +4,9 @@ import os
 import sys
 from functools import partial
 
-from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtCore import QObject, Qt, QTimer
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QGridLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QGridLayout, QWidget, QLabel
 
 from blackBlock import BlackBlock
 from moves import Moves
@@ -107,38 +107,62 @@ class Board(QWidget):
 
     def clicked(self, block, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            if block.getPosition() not in self.maxMoves:
-                self.maxMoves = []
-                if not block.haveActivated():
-                    for value in self.blocks.values():
-                        value.setActivated(False)
-                    if block.haveOccupied():
-                        block.setActivated(True)
-                        self.readyToMove = block
-                    self.maxMoves = Moves(block, self.blocks).canRoamTo()
-                    if self.maxMoves is None:
-                        self.maxMoves = []
-                    self.removeMovable()
-                    self.printMovable(self.maxMoves)
+                if block.getPosition() not in self.maxMoves:
+                    if self.BLACK_TURN:
+                        if "black" not in block.getKey():
+                            self.showPopUp("It's black turn.")
+                            return
+                    else:
+                        if "white" not in block.getKey():
+                            self.showPopUp("It's white turn.")
+                            return
+                    self.maxMoves = []
+                    if not block.haveActivated():
+                        for value in self.blocks.values():
+                            value.setActivated(False)
+                        if block.haveOccupied():
+                            block.setActivated(True)
+                            self.readyToMove = block
+                        self.maxMoves = Moves(block, self.blocks).canRoamTo()
+                        if self.maxMoves is None:
+                            self.maxMoves = []
+                        self.removeMovable()
+                        self.printMovable(self.maxMoves)
+                    else:
+                        block.setActivated(False)
                 else:
-                    block.setActivated(False)
-            else:
-                self.maxMoves = []
-                self.setValues(block, block.getPosition(), self.readyToMove.getKey())
-                self.setValues(self.readyToMove, self.readyToMove.getPosition(), None)
-                self.readyToMove = None
-                self.removeMovable()
+                    self.maxMoves = []
+                    self.setValues(block, block.getPosition(), self.readyToMove.getKey())
+                    self.setValues(self.readyToMove, self.readyToMove.getPosition(), None)
+                    self.readyToMove = None
+                    self.removeMovable()
+                    self.BLACK_TURN = not self.BLACK_TURN
 
     def printMovable(self, canMoveTo):
         for blockPosition in canMoveTo:
-            self.pixMap.load(self.param.MOVABLE_BLOCK)
-            self.blocks[blockPosition].setPixmap(self.pixMap.scaled(80, 80))
+            block = self.blocks[blockPosition]
+            if block.haveOccupied():
+                block.setBackGround('red')
+            else:
+                self.pixMap.load(self.param.MOVABLE_BLOCK)
+                block.setPixmap(self.pixMap.scaled(80, 80))
 
     def removeMovable(self):
         for block in self.blocks.values():
             if not block.haveOccupied():
                 self.pixMap.load(None)
                 block.setPixmap(self.pixMap)
+            else:
+                block.setOriginalBackGround()
+
+    def showPopUp(self, message):
+        label = QLabel(message)
+        label.setWordWrap(True)
+        label.show()
+        QTimer.singleShot(2000, partial(self.closePopUp, label))
+
+    def closePopUp(self, label):
+        label.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
