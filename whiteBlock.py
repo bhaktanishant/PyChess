@@ -5,4 +5,14 @@ from block import Block
 class WhiteBlock(Block):
     def __init__(self, parent=None):
         Block.__init__(self, parent)
-        self.setStyleSheet('background: white')
+        self.setOriginalBackGround()
+
+    def setActivated(self, what):
+        if what:
+            self.setBackGround('#BFFFA3')
+        else:
+            self.setOriginalBackGround()
+        self.activated = what
+
+    def setOriginalBackGround(self):
+        self.setBackGround('white')

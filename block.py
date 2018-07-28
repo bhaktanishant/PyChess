@@ -2,8 +2,8 @@
 
 import sys
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QLabel
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel
 
 
 class Block(QLabel):
@@ -29,8 +29,8 @@ class Block(QLabel):
     def setColor(self, color):
         self.color = color
 
-    def setActivated(self, what):
-        self.activated = what
+    def setBackGround(self, color):
+        self.setStyleSheet("background: {0}".format(color))
 
     def haveActivated(self):
         return self.activated

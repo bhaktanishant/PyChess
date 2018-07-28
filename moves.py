@@ -206,13 +206,9 @@ class Moves:
 	def blockAvailable(self, position):
 		block = self.blocks[position]
 		if block.haveOccupied():
-			print("have occupied")
 			if block.getColor() == self.block.getColor():
-				print("with same color")
 				return (False, False)
 			else:
-				print("with other color")
 				return (True, False)
 		else:
-			print("not occupied")
 			return (True, True)

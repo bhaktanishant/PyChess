@@ -16,3 +16,5 @@ class parameter:
     WHITE_CAMEL = drawableDir + "white_camel.png"
     WHITE_KING = drawableDir + "white_king.png"
     WHITE_QUEEN = drawableDir + "white_queen.png"
+
+    MOVABLE_BLOCK = drawableDir + "can_move.png"
